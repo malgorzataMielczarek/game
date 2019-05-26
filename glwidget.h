@@ -6,7 +6,10 @@
 #include <QMatrix4x4>
 #include <QKeyEvent>
 #include <QMap>
+#include <QElapsedTimer>
+#include <vector>
 #include "cmesh.h"
+#include "player.h"
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 
@@ -19,23 +22,19 @@ public:
     ~GLWidget();
 
     QSize sizeHint() const override;
+    void addObject(GameObject* obj);
 
     friend CMesh;
 
 public slots:
-    void setXRotation(float angle);
-    void setYRotation(float angle);
-    void setZRotation(float angle);
     void cleanup();
 
 signals:
-    void xRotationChanged(float angle);
-    void yRotationChanged(float angle);
-    void zRotationChanged(float angle);
 
 protected:
     void initializeGL() override;
     void paintGL() override;
+    void updateGL();
     void resizeGL(int width, int height) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -43,7 +42,6 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 
     void setTransforms(void);
-    void qNormalizeAngle(float &angle);
 
 private:
 
@@ -64,20 +62,20 @@ private:
 
     QMatrix4x4 m_proj;
     QMatrix4x4 m_camera;
+    char cameraType = 'f';
     QMatrix4x4 m_world;
 
-    QMap<QString, CMesh*> m_meshes;
+    Player m_player;
+
+    std::vector<GameObject*> m_gameObjects;
 
     bool m_keyState[256];
 
-    float m_camXRot = 15;
-    float m_camYRot = 330;
-    float m_camZRot = 0;
     float m_camDistance = 1.5f;
 
-    int m_timer;
-
-    QVector3D m_robotPosition;
+    QElapsedTimer timer;
+    float lastUpdateTime;
+    float FPS;
 };
 
 #endif

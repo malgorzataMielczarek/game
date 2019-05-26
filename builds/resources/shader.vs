@@ -14,7 +14,7 @@ struct Light {
 uniform Light light;
 
 void main() {
-    fragNormal = normal;
+    fragNormal = (modelMatrix*vec4(normal,0)).xyz;
     vertexWorldSpace = (modelMatrix * vertex).xyz;
     gl_Position = projMatrix * viewMatrix * modelMatrix * vertex;
 }
