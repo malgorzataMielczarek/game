@@ -9,16 +9,15 @@ Player::Player()
 
 void Player::init()
 {
-    m_mesh.generateMeshFromObjFile("resources/bunny.obj");
+    m_mesh=CMesh::m_meshes["bunny"];
     scale = QVector3D(0.1f,0.1f,0.1f);
     m_radius = 0.1f;
-
     m_name = "Player";
 }
 
 void Player::render(GLWidget *glwidget)
 {
-    m_mesh.render(glwidget);
+    m_mesh->render(glwidget);
 }
 
 void Player::update()

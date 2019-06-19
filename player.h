@@ -17,7 +17,7 @@ public:
     void render(GLWidget* glwidget);
     void update();
 
-    CMesh m_mesh;
+    CMesh* m_mesh;
 };
 
 #endif // PLAYER_H

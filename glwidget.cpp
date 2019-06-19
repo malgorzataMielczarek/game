@@ -5,6 +5,7 @@
 #include <math.h>
 #include <iostream>
 #include <qstack.h>
+#include "bullet.h"
 #include "cube.h"
 
 using namespace std;
@@ -49,11 +50,12 @@ void GLWidget::cleanup()
 
 void GLWidget::initializeGL()
 {
-    addObject((&m_player));
     initializeOpenGLFunctions();
     glClearColor(0.1f, 0.2f, 0.3f, 1);
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
+
+    CMesh::loadAllMeshes();
 
     m_program = new QOpenGLShaderProgram;
     m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, "resources/shader.vs");
@@ -77,6 +79,7 @@ void GLWidget::initializeGL()
     timer.start();
     FPS=60;
 
+    addObject((&m_player));
     for(int i = 0; i < 5; i++)
     {
         for(int j = 0; j < 7; j++)
@@ -93,7 +96,7 @@ void GLWidget::initializeGL()
 
             cube->scale = QVector3D(0.3f,0.3f,0.3f);
 
-            cube->m_radius = 0.5 * sqrt(3 * cube->scale.x() * cube->scale.x());
+            cube->m_radius = 0.5f * sqrt(3 * cube->scale.x() * cube->scale.x());
 
             addObject(cube);
         }
@@ -117,6 +120,7 @@ void GLWidget::paintGL()
     m_camera.setToIdentity();
 
     m_world.setToIdentity();
+
 
     if(cameraType == 'f')
     {
@@ -149,7 +153,7 @@ void GLWidget::paintGL()
             m_world.scale(obj->scale);
             setTransforms();
             obj->render(this);
-        m_world = worldMatrixStack.pop();
+            m_world = worldMatrixStack.pop();
     }
 
     m_program->release();
@@ -182,7 +186,27 @@ void GLWidget::updateGL()
 
             if(d < (obj->m_radius + obj2->m_radius))
             {
-                //TODO: reakcja na kolizję
+                std::string name1=obj->m_name;
+                std::string name2=obj->m_name;
+                GameObject* o1=obj;
+                GameObject* o2=obj2;
+                if(strcmp(name1.c_str(),name2.c_str())>0)
+                {
+                    o1=obj2;
+                    o2=obj;
+                    v=-v;
+                }
+                if(!o1->m_name.compare("Player")&&!o2->m_name.compare("bullet"))
+                {
+
+                }
+                else
+                {
+                    v.normalize();
+                    float energySum=obj->energy.length()+obj2->energy.length();
+                    obj->energy=v*energySum/2;
+                    obj2->energy=-v*energySum/2;
+                }
             }
         }
         obj->update();
@@ -190,23 +214,23 @@ void GLWidget::updateGL()
     QCursor::setPos(mapToGlobal(QPoint(width()/2,height()/2)));
     if(m_keyState[Qt::Key_W])
     {
-        m_player.position.setX(m_player.position.x() + m_player.direction.x() * m_player.speed);
-        m_player.position.setZ(m_player.position.z() + m_player.direction.z() * m_player.speed);
+        m_player.energy.setX(m_player.energy.x() + m_player.direction.x() * m_player.speed);
+        m_player.energy.setZ(m_player.energy.z() + m_player.direction.z() * m_player.speed);
     }
     if(m_keyState[Qt::Key_S])
     {
-        m_player.position.setX(m_player.position.x() - m_player.direction.x() * m_player.speed);
-        m_player.position.setZ(m_player.position.z() - m_player.direction.z() * m_player.speed);
+        m_player.energy.setX(m_player.energy.x() - m_player.direction.x() * m_player.speed);
+        m_player.energy.setZ(m_player.energy.z() - m_player.direction.z() * m_player.speed);
     }
     if(m_keyState[Qt::Key_A])
     {
-        m_player.position.setX(m_player.position.x() + m_player.direction.z() * m_player.speed);
-        m_player.position.setZ(m_player.position.z() - m_player.direction.x() * m_player.speed);
+        m_player.energy.setX(m_player.energy.x() + m_player.direction.z() * m_player.speed);
+        m_player.energy.setZ(m_player.energy.z() - m_player.direction.x() * m_player.speed);
     }
     if(m_keyState[Qt::Key_D])
     {
-        m_player.position.setX(m_player.position.x() - m_player.direction.z() * m_player.speed);
-        m_player.position.setZ(m_player.position.z() + m_player.direction.x() * m_player.speed);
+        m_player.energy.setX(m_player.energy.x() - m_player.direction.z() * m_player.speed);
+        m_player.energy.setZ(m_player.energy.z() + m_player.direction.x() * m_player.speed);
     }
     if(m_keyState[Qt::Key_Q])
     {
@@ -229,6 +253,19 @@ void GLWidget::updateGL()
     if(m_keyState[Qt::Key_T])
     {
         cameraType = 't';
+    }
+    for(int i=0; i<m_gameObjects.size();)
+    {
+        GameObject* obj=m_gameObjects[i];
+        if(obj->isAlive==false)
+        {
+            m_gameObjects.erase(m_gameObjects.begin()+i);
+            delete obj;
+        }
+        else
+        {
+            i++;
+        }
     }
 }
 
@@ -272,6 +309,17 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Escape)
         exit(0);
+    else if(e->key()==Qt::Key_Space)
+    {
+        Bullet* bullet=new Bullet();
+        bullet->position=m_player.position+m_player.direction*0.7f;
+        bullet->position.setY(0);
+        bullet->scale=QVector3D(0.5f,0.5f,0.5f);
+        bullet->m_radius=0.5f;
+        bullet->energy=3*m_player.direction;
+        bullet->energy.setY(0);
+        addObject(bullet);
+    }
     else
         QWidget::keyPressEvent(e);
 

@@ -14,6 +14,7 @@ public:
     QVector3D rotation = QVector3D(0.0f,0.0f,0.0f);
     QVector3D scale = QVector3D(1.0f,1.0f,1.0f);
     QVector3D energy = QVector3D(0.0f,0.0f,0.0f);
+    bool isAlive=true;
 
     float m_radius = 1.0f;
 

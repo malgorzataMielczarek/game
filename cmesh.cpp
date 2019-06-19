@@ -53,6 +53,25 @@ void CMesh::render(GLWidget* glWidget)
     glWidget->glDrawArrays(m_primitive, 0, vertexCount());
 }
 
+std::map<std::string, CMesh *> CMesh::m_meshes;
+
+void CMesh::loadAllMeshes()
+{
+    CMesh* mesh;
+
+    mesh=new CMesh;
+    mesh->generateCube(1.0f,1.0f,1.0f);
+    m_meshes["cube"]=mesh;
+
+    mesh=new CMesh;
+    mesh->generateSphere(0.5f,24);
+    m_meshes["sphere"]=mesh;
+
+    mesh=new CMesh;
+    mesh->generateMeshFromObjFile("resources/bunny.obj");
+    m_meshes["bunny"]=mesh;
+}
+
 void CMesh::quad3(GLfloat x1, GLfloat y1, GLfloat z1,
                  GLfloat x2, GLfloat y2, GLfloat z2,
                  GLfloat x3, GLfloat y3, GLfloat z3,

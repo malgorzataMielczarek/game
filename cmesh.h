@@ -27,6 +27,8 @@ public:
 
     void render(GLWidget* glWidget);
 
+    static std::map<std::string, CMesh *> m_meshes;
+    static void loadAllMeshes();
 
 private:
     void add(const QVector3D &v, const QVector3D &n);

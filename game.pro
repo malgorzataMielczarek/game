@@ -4,7 +4,8 @@ HEADERS       = glwidget.h \
     cmesh.h \
     player.h \
     gameobject.h \
-    cube.h
+    cube.h \
+    bullet.h
 SOURCES       = glwidget.cpp \
                 main.cpp \
                 window.cpp \
@@ -12,7 +13,8 @@ SOURCES       = glwidget.cpp \
     cmesh.cpp \
     player.cpp \
     gameobject.cpp \
-    cube.cpp
+    cube.cpp \
+    bullet.cpp
 
 QT           += widgets
 

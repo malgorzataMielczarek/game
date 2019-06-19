@@ -7,12 +7,15 @@ Cube::Cube()
 
 void Cube::init()
 {
-    m_mesh.generateCube(1.0f,1.0f,1.0f);
+    m_mesh=CMesh::m_meshes["cube"];
+    //scale=QVector3D(1.0f,1.0f,1.0f);
+    //m_radius=sqrt(3.0f*pow(1.0f/2,2));
+    m_name="Cube";
 }
 
 void Cube::render(GLWidget *glwidget)
 {
-    m_mesh.render((glwidget));
+    m_mesh->render(glwidget);
 }
 
 void Cube::update()
