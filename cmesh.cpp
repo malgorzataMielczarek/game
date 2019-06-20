@@ -57,6 +57,12 @@ void CMesh::render(GLWidget* glWidget)
     glWidget->glDrawArrays(m_primitive, 0, vertexCount());
 }
 
+void CMesh::render(GLWidget *glWidget, int offset, int count)
+{
+    m_vao_binder->rebind();
+    glWidget->glDrawArrays(m_primitive, offset, count);
+}
+
 std::map<std::string, CMesh *> CMesh::m_meshes;
 
 void CMesh::loadAllMeshes()

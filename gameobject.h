@@ -15,8 +15,13 @@ public:
     QVector3D position = QVector3D(0.0f,0.0f,0.0f);
     QVector3D rotation = QVector3D(0.0f,0.0f,0.0f);
     QVector3D scale = QVector3D(1.0f,1.0f,1.0f);
+
+    QVector3D  previousPosition = QVector3D(0.0f, 0.0f, 0.0f);
+
     float m_radius = 1.0f;
+
     QVector3D material_color = QVector3D(1.0f,1.0f,1.0f);
+
     std::string m_name;
 
     virtual void init() = 0;

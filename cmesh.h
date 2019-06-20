@@ -26,12 +26,16 @@ public:
     void initVboAndVao();
 
     void render(GLWidget* glWidget);
+    void render(GLWidget* glWidget, int offset, int count);
 
     static std::map<std::string, CMesh *> m_meshes;
     static void loadAllMeshes();
 
-private:
     void add(const QVector3D &v, const QVector3D &n, const QVector2D &uv);
+
+    GLenum m_primitive;
+
+private:
 
     void quad3(GLfloat x1, GLfloat y1, GLfloat z1,
                GLfloat x2, GLfloat y2, GLfloat z2,
@@ -40,7 +44,6 @@ private:
 
     QVector<GLfloat> m_data;
     int m_count;
-    GLenum m_primitive;
 
     QOpenGLVertexArrayObject m_vao;
     QOpenGLBuffer m_vbo;

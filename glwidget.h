@@ -77,6 +77,24 @@ private:
     QElapsedTimer timer;
     float lastUpdateTime;
     float FPS;
+
+    struct Triangle
+    {
+        QVector3D v1, v2, v3;
+        QOpenGLTexture* texture;
+        QVector3D n;
+        float A, B, C, D;
+        int groupSize;
+    };
+
+    std::vector<Triangle> collisionTriangles;
+    CMesh collisionTrianglesMesh;
+    void initCollisionTriangles();
+    void addTriangleCollider(QVector3D v1, QVector3D v2, QVector3D v3, int groupSize = 1,
+                             QVector2D uv1 = QVector2D(0,0), QVector2D uv2 = QVector2D(0,0),
+                             QVector2D uv3 = QVector2D(0,0), QOpenGLTexture* texture = nullptr);
+    void loadHeightMap(QString filepath, QVector3D center, QVector3D size,
+                       QVector2D maxUV = QVector2D(0, 0), QOpenGLTexture* texture = nullptr);
 };
 
 #endif
