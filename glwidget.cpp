@@ -58,6 +58,7 @@ void GLWidget::initializeGL()
 
     CMesh::loadAllMeshes();
 
+    TextureManager::init();
     m_program = new QOpenGLShaderProgram;
     m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, "resources/shader.vs");
     m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, "resources/shader.fs");
