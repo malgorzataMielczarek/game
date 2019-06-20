@@ -27,9 +27,11 @@ public:
 
     void render(GLWidget* glWidget);
 
+    static std::map<std::string, CMesh *> m_meshes;
+    static void loadAllMeshes();
 
 private:
-    void add(const QVector3D &v, const QVector3D &n);
+    void add(const QVector3D &v, const QVector3D &n, const QVector2D &uv);
 
     void quad3(GLfloat x1, GLfloat y1, GLfloat z1,
                GLfloat x2, GLfloat y2, GLfloat z2,

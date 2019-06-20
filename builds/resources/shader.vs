@@ -1,10 +1,14 @@
 attribute vec4 vertex;
 attribute vec3 normal;
+attribute vec2 uvCoord;
 uniform mat4 projMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
+uniform highp int hasTexture;
+uniform sampler2D texture;
 varying highp vec3 fragNormal;
 varying highp vec3 vertexWorldSpace;
+varying highp vec2 fragUV;
 
 struct Light {
     highp vec3 position;
@@ -14,7 +18,8 @@ struct Light {
 uniform Light light;
 
 void main() {
-    fragNormal = normal;
+    fragNormal = (modelMatrix*vec4(normal,0)).xyz;
+    fragUV = uvCoord;
     vertexWorldSpace = (modelMatrix * vertex).xyz;
     gl_Position = projMatrix * viewMatrix * modelMatrix * vertex;
 }
