@@ -58,6 +58,7 @@ private:
     int m_viewMatrixLoc;
     int m_modelMatrixLoc;
     int m_modelColorLoc;
+    int m_hasTextureLoc;
     LightLocStruct m_lightLoc;
 
     QMatrix4x4 m_proj;

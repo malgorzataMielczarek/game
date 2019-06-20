@@ -7,6 +7,7 @@
 #include <qstack.h>
 #include "bullet.h"
 #include "cube.h"
+#include "texturemanager.h"
 
 using namespace std;
 
@@ -69,6 +70,7 @@ void GLWidget::initializeGL()
     m_viewMatrixLoc = m_program->uniformLocation("viewMatrix");
     m_modelMatrixLoc = m_program->uniformLocation("modelMatrix");
     m_modelColorLoc = m_program->uniformLocation("modelColor");
+    m_hasTextureLoc = m_program->uniformLocation("hasTexture");
     m_lightLoc.position = m_program->uniformLocation("light.position");
     m_lightLoc.ambient = m_program->uniformLocation("light.ambient");
     m_lightLoc.diffuse = m_program->uniformLocation("light.diffuse");
@@ -97,6 +99,7 @@ void GLWidget::initializeGL()
             cube->scale = QVector3D(0.3f,0.3f,0.3f);
 
             cube->m_radius = 0.5f * sqrt(3 * cube->scale.x() * cube->scale.x());
+            cube->m_texture = TextureManager::getTexture("brick");
 
             addObject(cube);
         }
@@ -145,6 +148,15 @@ void GLWidget::paintGL()
 
         m_program->setUniformValue(m_modelColorLoc, obj->material_color);
 
+        if(obj->m_texture!=nullptr)
+        {
+            m_program->setUniformValue(m_hasTextureLoc, 1);
+            obj->m_texture->bind();
+        }
+        else
+        {
+            m_program->setUniformValue(m_hasTextureLoc, 0);
+        }
         worldMatrixStack.push(m_world);
             m_world.translate(obj->position);
             m_world.rotate(obj->rotation.x(),1,0,0);

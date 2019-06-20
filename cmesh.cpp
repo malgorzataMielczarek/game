@@ -19,7 +19,7 @@ CMesh::~CMesh()
     delete m_vao_binder;
 }
 
-void CMesh::add(const QVector3D &v, const QVector3D &n)
+void CMesh::add(const QVector3D &v, const QVector3D &n, const QVector2D &uv)
 {
     m_data.append(v.x());
     m_data.append(v.y());
@@ -27,6 +27,8 @@ void CMesh::add(const QVector3D &v, const QVector3D &n)
     m_data.append(n.normalized().x());
     m_data.append(n.normalized().y());
     m_data.append(n.normalized().z());
+    m_data.append(uv.x());
+    m_data.append(uv.y());
     m_count++;
 }
 
@@ -43,8 +45,10 @@ void CMesh::initVboAndVao()
 
     f->glEnableVertexAttribArray(0);
     f->glEnableVertexAttribArray(1);
-    f->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
-    f->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<void *>(3 * sizeof(GLfloat)));
+    f->glEnableVertexAttribArray(2);
+    f->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), nullptr);
+    f->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), reinterpret_cast<void *>(3 * sizeof(GLfloat)));
+    f->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), reinterpret_cast<void *>(6 * sizeof(GLfloat)));
 }
 
 void CMesh::render(GLWidget* glWidget)
@@ -79,13 +83,13 @@ void CMesh::quad3(GLfloat x1, GLfloat y1, GLfloat z1,
 {
     QVector3D n = QVector3D::normal(QVector3D(x4 - x1, y4 - y1, z4 - z1), QVector3D(x2 - x1, y2 - y1, z2 - z1));
 
-    add(QVector3D(x1, y1, z1), n);
-    add(QVector3D(x4, y4, z4), n);
-    add(QVector3D(x2, y2, z2), n);
+    add(QVector3D(x1, y1, z1), n, QVector2D(0,1));
+    add(QVector3D(x4, y4, z4), n, QVector2D(1,1));
+    add(QVector3D(x2, y2, z2), n, QVector2D(0,0));
 
-    add(QVector3D(x3, y3, z3), n);
-    add(QVector3D(x2, y2, z2), n);
-    add(QVector3D(x4, y4, z4), n);
+    add(QVector3D(x3, y3, z3), n, QVector2D(1,0));
+    add(QVector3D(x2, y2, z2), n, QVector2D(0,0));
+    add(QVector3D(x4, y4, z4), n, QVector2D(1,1));
 }
 
 void CMesh::generateCube(GLfloat w, GLfloat h, GLfloat d)
@@ -128,8 +132,14 @@ void CMesh::generateSphere(float r, int N)
              float z1 = r * nz1;
              float z2 = r * nz2;
 
-            add(QVector3D(x1, y1, z1), QVector3D(nx1, ny1, nz1));
-            add(QVector3D(x2, y2, z2), QVector3D(nx2, ny2, nz2));
+             float u1 = 0.5 + atan2(nz1, nx1)/(2*M_PI);
+             float v1 = 0.5 + asin(ny1)/M_PI;
+
+             float u2 = 0.5 + atan2(nz2, nx2)/(2*M_PI);
+             float v2 = 0.5 + asin(ny2)/M_PI;
+
+            add(QVector3D(x1, y1, z1), QVector3D(nx1, ny1, nz1), QVector2D(u1, v1));
+            add(QVector3D(x2, y2, z2), QVector3D(nx2, ny2, nz2), QVector2D(u2, v2));
         }
     }
 
@@ -196,7 +206,7 @@ void CMesh::generateMeshFromObjFile(QString filename)
                     if(hasNormals)
                         n = normals.at(indices.at(2).toInt() - 1);
 
-                    add(v, n);
+                    add(v, n, uv);
                 }
             }
         }

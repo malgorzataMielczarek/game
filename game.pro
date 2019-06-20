@@ -1,4 +1,5 @@
 HEADERS       = glwidget.h \
+    texturemanager.h \
                 window.h \
                 mainwindow.h \
     cmesh.h \
@@ -8,6 +9,7 @@ HEADERS       = glwidget.h \
     bullet.h
 SOURCES       = glwidget.cpp \
                 main.cpp \
+    texturemanager.cpp \
                 window.cpp \
                 mainwindow.cpp \
     cmesh.cpp \
